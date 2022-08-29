@@ -20,7 +20,7 @@ add edges such that:
 
  */
 
-public class Main {
+public class AuthorSol {
 	
 	public static void main(String[] args) {	
 		FastScanner fs = new FastScanner();
