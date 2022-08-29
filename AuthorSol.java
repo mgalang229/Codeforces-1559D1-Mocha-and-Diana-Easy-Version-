@@ -18,8 +18,6 @@ add edges such that:
 - both of their graphs are still forests
 - if edge (u, v) is added to mocha, then edge(u, v) is also added to diana (vice-versa)
 
-
-
  */
 
 public class Main {
@@ -31,30 +29,32 @@ public class Main {
 		//T = fs.nextInt();
 		for (int tc = 1; tc <= T; tc++) {
 			int n = fs.nextInt(), m = fs.nextInt(), d = fs.nextInt();
-			int[][] f = new int[2][n+1];
+			int[][] parents = new int[2][n+1];
 			for (int i = 1; i <= n; i++) {
-				f[0][i] = i;
-				f[1][i] = i;
+				parents[0][i] = i;
+				parents[1][i] = i;
 			}
 			for (int i = 0; i < m; i++) {
 				int u = fs.nextInt(), v = fs.nextInt();
-				int fu = getF(f, 0, u);
-				int fv = getF(f, 0, v);
-				f[0][fu] = fv;
+				int uPar = getParent(parents, 0, u);
+				int vPar = getParent(parents, 0, v);
+				parents[0][uPar] = vPar;
 			}
+			//printMatrix(f, n);
 			for (int i = 0; i < d; i++) {
 				int u = fs.nextInt(), v = fs.nextInt();
-				int fu = getF(f, 1, u);
-				int fv = getF(f, 1, v);
-				f[1][fu] = fv;
+				int uPar = getParent(parents, 1, u);
+				int vPar = getParent(parents, 1, v);
+				parents[1][uPar] = vPar;
 			}
+			//printMatrix(f, n);
 			ArrayList<Pair> arr = new ArrayList<>();
 			for (int i = 1; i <= n; i++) {
 				for (int j = i + 1; j <= n; j++) {
-					if (getF(f, 0, i) != getF(f, 0, j) && getF(f, 1, i) != getF(f, 1, j)) {
+					if (getParent(parents, 0, i) != getParent(parents, 0, j) && getParent(parents, 1, i) != getParent(parents, 1, j)) {
 						arr.add(new Pair(i, j));
-						f[0][getF(f, 0, i)] = getF(f, 0, j);
-						f[1][getF(f, 1, i)] = getF(f, 1, j);
+						parents[0][getParent(parents, 0, i)] = getParent(parents, 0, j);
+						parents[1][getParent(parents, 1, i)] = getParent(parents, 1, j);
 					}
 				}
 			}
@@ -66,6 +66,23 @@ public class Main {
 		out.close();
 	}
 	
+	static int getParent(int[][] parents, int id, int x) {
+		if (x == parents[id][x]) {
+			return x;
+		}
+		return parents[id][x] = getParent(parents, id, parents[id][x]);
+	}
+	
+	static void printMatrix(int[][] f, int n) {
+		for (int i = 0; i < 2; i++) {
+			for (int j = 1; j <= n; j++) {
+				System.out.print(f[i][j] + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
+	}
+	
 	static class Pair {
 		int first;
 		int second;
@@ -74,13 +91,6 @@ public class Main {
 			this.first = first;
 			this.second = second;
 		}
-	}
-	
-	static int getF(int[][] f, int id, int x) {
-		if (x == f[id][x]) {
-			return x;
-		}
-		return f[id][x] = getF(f, id, f[id][x]);
 	}
 	
 	static final Random rnd = new Random();
